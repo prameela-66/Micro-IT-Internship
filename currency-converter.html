@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #6ab1e7, #4377b5);
+        }
+
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        .converter-box {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .amount-container, .currency-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        input, select {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: #4377b5;
+        }
+
+        .currency-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .currency-container {
+            flex: 1;
+        }
+
+        button {
+            background-color: #4377b5;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #365d8f;
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #ff4444;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Currency Converter</h1>
+        <div class="converter-box">
+            <div class="amount-container">
+                <label for="amount">Amount</label>
+                <input type="number" id="amount" placeholder="Enter amount" min="0" step="0.01">
+            </div>
+            <div class="currency-row">
+                <div class="currency-container">
+                    <label for="fromCurrency">From</label>
+                    <select id="fromCurrency"></select>
+                </div>
+                <div class="currency-container">
+                    <label for="toCurrency">To</label>
+                    <select id="toCurrency"></select>
+                </div>
+            </div>
+            <button onclick="convertCurrency()">Convert</button>
+            <div id="result"></div>
+            <div id="error" class="error"></div>
+        </div>
+    </div>
+
+    <script>
+        const currencies = {
+            USD: "United States Dollar",
+            EUR: "Euro",
+            GBP: "British Pound",
+            JPY: "Japanese Yen",
+            AUD: "Australian Dollar",
+            CAD: "Canadian Dollar",
+            CHF: "Swiss Franc",
+            CNY: "Chinese Yuan",
+            INR: "Indian Rupee",
+            NZD: "New Zealand Dollar"
+        };
+
+        // Populate currency dropdowns
+        function populateCurrencyDropdowns() {
+            const fromSelect = document.getElementById('fromCurrency');
+            const toSelect = document.getElementById('toCurrency');
+            
+            for (const [code, name] of Object.entries(currencies)) {
+                const optionFrom = new Option(`${code} - ${name}`, code);
+                const optionTo = new Option(`${code} - ${name}`, code);
+                
+                fromSelect.add(optionFrom);
+                toSelect.add(optionTo);
+            }
+
+            // Set default values
+            fromSelect.value = 'USD';
+            toSelect.value = 'EUR';
+        }
+
+        // Convert currency using API
+        async function convertCurrency() {
+            const amount = document.getElementById('amount').value;
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('error');
+
+            // Clear previous results and errors
+            resultDiv.textContent = '';
+            errorDiv.textContent = '';
+
+            // Validate input
+            if (!amount || amount <= 0) {
+                errorDiv.textContent = 'Please enter a valid amount';
+                return;
+            }
+
+            try {
+                resultDiv.innerHTML = '<div class="loading">Converting...</div>';
+                
+                // Using ExchangeRate-API
+                const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    const rate = data.rates[toCurrency];
+                    const convertedAmount = (amount * rate).toFixed(2);
+                    resultDiv.textContent = `${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}`;
+                } else {
+                    throw new Error('Failed to fetch exchange rates');
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Error fetching exchange rates. Please try again later.';
+                resultDiv.textContent = '';
+            }
+        }
+
+        // Initialize the currency dropdowns when the page loads
+        window.onload = populateCurrencyDropdowns;
+    </script>
+</body>
+</html> 
