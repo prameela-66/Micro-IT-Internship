@@ -1,0 +1,32 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Todo</title>
+  <link rel="stylesheet" href="{% static 'todoapp/style.css' %}" />
+</head>
+<body>
+  <div class="App">
+    <h1>Edit Todo</h1>
+    <div class="todo-wrapper">
+      <form action="{% url 'edit_todo' todo.id %}" method="post" class="todo-input">
+        {% csrf_token %}
+        <div class="todo-input-item">
+          <label>Title</label>
+          <input type="text" name="title" value="{{ todo.title }}" required />
+        </div>
+        <div class="todo-input-item">
+          <label>Description</label>
+          <input type="text" name="description" value="{{ todo.description }}" required />
+        </div>
+        <div class="todo-input-item">
+          <button type="submit" class="primaryBtn">Update</button>
+          <a href="/" class="secondaryBtn">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

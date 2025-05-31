@@ -1,0 +1,93 @@
+
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Todos</title>
+  
+  <link rel="stylesheet" href="{% static 'todoapp/style.css' %}" />
+</head>
+<body>
+  <div class="App">
+    <h1>My Todos</h1>
+
+    <div class="todo-wrapper">
+      <!-- Add Todo Form -->
+      <form action="{% url 'add_todo' %}" method="post" class="todo-input">
+        {% csrf_token %}
+        <div class="todo-input-item">
+          <label>Title</label>
+          <input type="text" name="title" placeholder="What's the task title?" required />
+        </div>
+        <div class="todo-input-item">
+          <label>Description</label>
+          <input type="text" name="description" placeholder="What's the task description?" required />
+        </div>
+        <div class="todo-input-item">
+          <button type="submit" class="primaryBtn">Add</button>
+        </div>
+      </form>
+
+      <!-- Toggle Buttons -->
+      <div class="btn-area">
+        <a href="/?show_completed=false" class="secondaryBtn {% if not show_completed %}active{% endif %}">Todo</a>
+        <a href="/?show_completed=true" class="secondaryBtn {% if show_completed %}active{% endif %}">Completed</a>
+      </div>
+
+      <!-- Todo List -->
+      <div class="todo-list">
+        {% if not show_completed %}
+          {% for item in todos %}
+            <div class="todo-list-item">
+              <div>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.description }}</p>
+              </div>
+              <div>
+                <a href="{% url 'delete_todo' item.id %}" title="Delete?">
+                  <svg class="icon" fill="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M3 6h18M9 6v12m6-12v12M5 6v12a2 2 0 002 2h10a2 2 0 002-2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  </svg>
+                </a>
+                <a href="{% url 'complete_todo' item.id %}" title="Complete?">
+                  <svg class="check-icon" fill="none" stroke="green" stroke-width="3" viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                </a>
+                <a href="{% url 'edit_todo' item.id %}" title="Edit?">
+                  <svg class="check-icon" fill="none" stroke="blue " stroke-width="2" viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4 12.5-12.5z" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          {% empty %}
+            <p>No todos available.</p>
+          {% endfor %}
+        {% else %}
+          {% for item in completed_todos %}
+            <div class="todo-list-item">
+              <div>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.description }}</p>
+                <p><small>Completed on: {{ item.completed_on|date:"d-m-Y H:i:s" }}</small></p>
+              </div>
+              <div>
+                <a href="{% url 'delete_todo' item.id %}" title="Delete?">
+                  <svg class="icon" fill="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M3 6h18M9 6v12m6-12v12M5 6v12a2 2 0 002 2h10a2 2 0 002-2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          {% empty %}
+            <p>No completed todos.</p>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
