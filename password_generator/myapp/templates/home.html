@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Password Generator</title>
+  <style>
+    body { 
+        font-family: Arial;
+         background: #f0f2f5; 
+         padding: 40px;
+          display: flex; 
+          justify-content: center; 
+        }
+    .box {
+         background: white; 
+         padding: 30px;
+          border-radius: 10px; 
+          width: 300px; 
+          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+         }
+    input[type="checkbox"] { 
+        margin-right: 10px; 
+    }
+    button {
+         margin-top: 15px; 
+         padding: 10px; 
+         width: 100%; 
+         background: #007bff; 
+         color: white; 
+         border: none; 
+         border-radius: 5px; 
+        }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2 style="margin-left: 25px;">Password Generator</h2>
+    <form action="{% url 'generate_password' %}" method="get">
+        <label>Password length: </label>
+      <input type="number" name="length" value="12" min="4" max="64"><br><br>
+      
+      <input type="checkbox" name="uppercase" > Include Uppercase<br>
+      <input type="checkbox" name="lowercase" > Include Lowercase<br>
+      <input type="checkbox" name="numbers" > Include Numbers<br>
+      <input type="checkbox" name="special"> Include Special Characters<br><br>
+
+      <button type="submit">Generate Password</button>
+    </form>
+  </div>
+</body>
+</html>

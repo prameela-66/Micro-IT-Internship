@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Password Result</title>
+  <style>
+    body { 
+        font-family: Arial; 
+        background: #f0f2f5; 
+        display: flex; 
+        justify-content: center; 
+        padding: 40px; 
+    }
+    .box { 
+        background: white;
+         padding: 30px; 
+         border-radius: 10px;
+         width: 300px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+        text-align: center;
+     }
+    .password {
+         font-size: 18px;
+          margin: 20px 0; 
+          word-wrap: break-word;
+         }
+    a { 
+        color: #007bff; 
+        text-decoration: none;
+     }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Your Generated Password</h2>
+    <div class="password">{{ password }}</div>
+    <a href="{% url 'home' %}">Generate another</a>
+  </div>
+</body>
+</html>
